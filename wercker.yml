@@ -17,6 +17,8 @@ build:
         code: phpunit --configuration phpunit.xml
 deploy:
   steps:
+    - add-to-known_hosts:
+        hostname: git2.eu1.frbit.com
     - script:
         name: Setup git repository
         code: |-
