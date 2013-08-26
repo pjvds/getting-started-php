@@ -1,13 +1,51 @@
+# Execute the pipeline with the wercker/php box
 box: wercker/php
 build:
   steps:
+    # Install dependencies with composer
     - script:
         name: install dependencies
         code: |-
             composer install --no-interaction
+    # Spin webservice and serve site
     - script:
         name: Serve application
         code: php -S localhost:8000 >> /dev/null &
+    # Execute integration tests with php unit
     - script:
         name: PHPUnit integration tests
         code: phpunit --configuration phpunit.xml
+deploy:
+  steps:
+    - script:
+        name: Setup git repository
+        code: |-
+          # Remove existing git repository if exists
+          if [ -d ".git" ]; then rm -rf .git fi'
+
+          # Configure git user
+          git config --global user.name "wercker"
+          git config --global user.email pleasemailus@wercker.com
+
+          # Add fortrabbit remote
+          git remote add fortrabbit "git@git2.eu1.frbit.com:cities.git"
+
+          # Initialize new repository and add everything
+          git init
+          git add .
+          git commit -m 'Deploy commit'
+    - wercker/add-to-known_hosts:
+        name: Trust host
+        hostname: git1.eu1.frbit.com
+    - script:
+        name: Make .SSH directory
+        code: mkdir -p "$HOME/.ssh"
+    - create-file:
+        name: Write SSH key
+        filename: $HOME/.ssh/id_rsa
+        overwrite: true
+        content: $FORTRABBIT_PRIVATE
+    - script:
+        name: Git push deploy
+        code: |-
+          git push fortrabbit master -f
