@@ -49,7 +49,10 @@ deploy:
         content: $FORTRABBIT_PRIVATE
     - script:
         name: Set permissions for SSH key
-        code: chmod 0600 $HOME/.ssh/id_rsa
+        code: |-
+          chmod 0600 $HOME/.ssh/id_rsa
+          echo "Key is:"
+          cat $HOME/.ssh/id_rsa
     - script:
         name: Git push deploy
         code: |-
