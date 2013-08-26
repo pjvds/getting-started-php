@@ -18,7 +18,7 @@ build:
 deploy:
   steps:
     - add-to-known_hosts:
-        hostname: git2.eu1.frbit.com
+        hostname: $FORTRABBIT_GIT_HOST
     - script:
         name: Setup git repository
         code: |-
@@ -35,10 +35,7 @@ deploy:
           git commit -m 'Deploy commit'
 
           # Add fortrabbit remote
-          git remote add fortrabbit "git@git2.eu1.frbit.com:cities.git"
-    - wercker/add-to-known_hosts:
-        name: Trust host
-        hostname: git1.eu1.frbit.com
+          git remote add fortrabbit "$FORTRABBIT_GIT_REMOTE"
     - script:
         name: Make .SSH directory
         code: mkdir -p "$HOME/.ssh"
@@ -46,7 +43,7 @@ deploy:
         name: Write SSH key
         filename: $HOME/.ssh/id_rsa
         overwrite: true
-        content: $FORTRABBIT_PRIVATE
+        content: $FORTRABBIT_KEY_PRIVATE
     - script:
         name: Set permissions for SSH key
         code: |-
