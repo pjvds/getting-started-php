@@ -27,13 +27,13 @@ deploy:
           git config --global user.name "wercker"
           git config --global user.email pleasemailus@wercker.com
 
-          # Add fortrabbit remote
-          git remote add fortrabbit "git@git2.eu1.frbit.com:cities.git"
-
           # Initialize new repository and add everything
           git init
           git add .
           git commit -m 'Deploy commit'
+
+          # Add fortrabbit remote
+          git remote add fortrabbit "git@git2.eu1.frbit.com:cities.git"
     - wercker/add-to-known_hosts:
         name: Trust host
         hostname: git1.eu1.frbit.com
